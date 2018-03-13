@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFEFEFEF"
+    tools:context=".ProfileFragment">
+
+    <LinearLayout
+        android:id="@+id/linear_layout_fragment_profile"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#FFFFFFFF"
+        android:gravity="center_vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circle_image_view_fragment_profile"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/placeholder"
+            app:civ_border_color="#FFFFFFFF"
+            app:civ_border_width="1dp" />
+
+        <TextView
+            android:id="@+id/text_view_username_fragment_profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:gravity="start|center_vertical"
+            android:textColor="#FF999999"
+            tools:text="用户名" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_view_setting_fragment_profile"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_below="@id/linear_layout_fragment_profile"
+        android:layout_marginTop="8dp"
+        android:background="#FFFFFFFF"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:text="@string/text_settings"
+        android:textColor="#FF444444" />
+</RelativeLayout>
