@@ -60,6 +60,7 @@
             android:id="@+id/text_input_edit_text_username_activity_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:imeOptions="flagForceAscii"
             android:hint="@string/text_username" />
     </android.support.design.widget.TextInputLayout>
 

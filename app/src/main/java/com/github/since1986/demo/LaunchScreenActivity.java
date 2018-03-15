@@ -45,12 +45,7 @@ public class LaunchScreenActivity extends Activity {
         imageView3.setAdjustViewBounds(true);
         imageView3.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView3.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.bg_launch_screen_3));
-
-        ImageView imageView4 = new ImageView(this);
-        imageView4.setAdjustViewBounds(true);
-        imageView4.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView4.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.bg_launch_screen_4));
-        imageView4.setOnClickListener(new View.OnClickListener() {
+        imageView3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LaunchScreenActivity.this, MainActivity.class));
@@ -59,7 +54,7 @@ public class LaunchScreenActivity extends Activity {
 
         final float[] actionDownY = new float[1];
         final float[] actionDownX = new float[1];
-        imageView4.setOnTouchListener(new View.OnTouchListener() {
+        imageView3.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) { //设置Toolbar双击滚动到顶
                 //这里没有使用 GestureDetector 中的 onFling来处理，而是回归到原始的 switch (event.getAction()) case 的方式，是因为不知道为什么会有一定几率会发出ACTION_CANCEL 因而无法触发 onFling
@@ -83,7 +78,6 @@ public class LaunchScreenActivity extends Activity {
         viewList.add(imageView1);
         viewList.add(imageView2);
         viewList.add(imageView3);
-        viewList.add(imageView4);
 
         viewPager.setAdapter(new PagerAdapter() {
             @Override

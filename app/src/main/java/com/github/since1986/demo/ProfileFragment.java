@@ -38,7 +38,7 @@ public class ProfileFragment extends Fragment {
         if (loginUsername == null) {
             Glide
                     .with(this)
-                    .load(R.drawable.placeholder)
+                    .load(R.drawable.avatar)
                     .into(circleImageViewAvatar);
 
             textViewUsername.setText(R.string.text_login_or_register);

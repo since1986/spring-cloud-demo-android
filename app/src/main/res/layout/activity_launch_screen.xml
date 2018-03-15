@@ -42,12 +42,6 @@
             android:layout_height="16dp"
             android:adjustViewBounds="true"
             android:src="@drawable/selector_banner_indicator" />
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/selector_banner_indicator" />
     </LinearLayout>
 
     <android.support.constraint.Guideline
