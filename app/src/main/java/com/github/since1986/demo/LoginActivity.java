@@ -25,10 +25,12 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -55,9 +57,16 @@ public class LoginActivity extends AppCompatActivity {
     private IndexService indexService;
 
     public LoginActivity() {
-        Retrofit retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit
+                .Builder()
+                .baseUrl(API_BASE_URL)
+                .addConverterFactory(JacksonConverterFactory.create())
                 .client(
                         new OkHttpClient.Builder()
+                                .addInterceptor(
+                                        new HttpLoggingInterceptor()
+                                                .setLevel(HttpLoggingInterceptor.Level.BODY)
+                                )
                                 .addInterceptor(
                                         new Interceptor() {
                                             @Override
@@ -69,28 +78,17 @@ public class LoginActivity extends AppCompatActivity {
                                                         .build();
                                                 return chain.proceed(request);
                                             }
-                                        })
-                                .build())
-                .baseUrl(API_BASE_URL)
+                                        }
+                                )
+                                .build()
+                )
+
                 .build();
         userService = retrofit.create(UserService.class);
         indexService = retrofit.create(IndexService.class);
     }
 
     private void doLogin(final String username, final String password) {
-        Call<Long> timeCall = indexService.time();
-        timeCall.enqueue(new Callback<Long>() {
-            @Override
-            public void onResponse(Call<Long> call, Response<Long> response) {
-                Toast.makeText(LoginActivity.this, response.body() + "", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<Long> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "调用失败 [" + t.getMessage() + "]", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         Call<ResponseBody> result = userService.login(username, password);
         result.enqueue(new Callback<ResponseBody>() {
             @Override
