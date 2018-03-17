@@ -3,6 +3,7 @@ package com.github.since1986.demo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -23,12 +24,10 @@ import java.io.IOException;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -71,12 +70,14 @@ public class LoginActivity extends AppCompatActivity {
                                         new Interceptor() {
                                             @Override
                                             public okhttp3.Response intercept(Chain chain) throws IOException {
-                                                Request request = chain.request()
-                                                        .newBuilder()
-                                                        .removeHeader("User-Agent")//移除旧的
-                                                        .addHeader("User-Agent", WebSettings.getDefaultUserAgent(LoginActivity.this))//添加真正的头部
-                                                        .build();
-                                                return chain.proceed(request);
+                                                return chain.proceed(
+                                                        chain.request()
+                                                                .newBuilder()
+                                                                .addHeader("User-Agent", WebSettings.getDefaultUserAgent(LoginActivity.this))
+                                                                .addHeader("X-NNED-X-NEED-CSRF-PROTECTION", "true")
+                                                                .addHeader("X-CSRF-TOKEN", getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE).getString(LauncherActivity.KEY_CSRF_TOKEN, ""))
+                                                                .build()
+                                                );
                                             }
                                         }
                                 )
@@ -91,16 +92,36 @@ public class LoginActivity extends AppCompatActivity {
     private void doLogin(final String username, final String password) {
         Call<ResponseBody> result = userService.login(username, password);
         result.enqueue(new Callback<ResponseBody>() {
+
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 Headers responseHeader = response.headers();
                 String headerString = responseHeader.get("Authorization");
                 if (StringUtils.isNoneBlank(headerString)) {
+                    String token = StringUtils.removeFirst(headerString, "Bearer ");
+                    String loginUser = null;
+                    try {
+                        loginUser = response.body().string();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE)
                             .edit()
-                            .putString(KEY_LOGIN_USER_USERNAME, response.message())
-                            .putString(KEY_TOKEN, StringUtils.removeFirst(headerString, "Bearer "))
+                            .putString(KEY_LOGIN_USER, loginUser)
+                            .putString(KEY_TOKEN, token)
                             .apply();
+                    setResult(
+                            RESULT_OK,
+                            new Intent(LoginActivity.this, MainActivity.class)
+                                    .putExtra(KEY_TOKEN, token)
+                                    .putExtra(KEY_LOGIN_USER, loginUser)
+                    );
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    });
                 }
             }
 

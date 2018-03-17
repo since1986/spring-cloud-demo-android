@@ -13,6 +13,6 @@ import retrofit2.http.POST;
 public interface UserService {
 
     @FormUrlEncoded
-    @POST("login")
+    @POST("private/login")
     Call<ResponseBody> login(@Field("username") String username, @Field("password") String password);
 }
