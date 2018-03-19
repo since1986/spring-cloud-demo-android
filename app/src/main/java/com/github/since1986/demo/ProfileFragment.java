@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
@@ -35,7 +37,7 @@ public class ProfileFragment extends Fragment {
     private void init() {
         loginUsername = getContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE).getString(KEY_LOGIN_USER_USERNAME, null);
         loginUserAvatar = getContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE).getString(KEY_LOGIN_USER_AVATAR, null);
-        if (loginUsername == null) {
+        if (StringUtils.isAllBlank(loginUsername)) {
             Glide
                     .with(this)
                     .load(R.drawable.avatar)

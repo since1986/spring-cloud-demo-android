@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.since1986.demo.model.User;
 import com.github.since1986.demo.service.IndexService;
 import com.github.since1986.demo.service.UserService;
 
@@ -24,10 +26,10 @@ import java.io.IOException;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -90,44 +92,41 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void doLogin(final String username, final String password) {
-        Call<ResponseBody> result = userService.login(username, password);
-        result.enqueue(new Callback<ResponseBody>() {
-
+        Call<User> result = userService.login(username, password);
+        result.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                Headers responseHeader = response.headers();
-                String headerString = responseHeader.get("Authorization");
-                if (StringUtils.isNoneBlank(headerString)) {
-                    String token = StringUtils.removeFirst(headerString, "Bearer ");
-                    String loginUser = null;
-                    try {
-                        loginUser = response.body().string();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    Headers responseHeader = response.headers();
+                    String headerString = responseHeader.get("Authorization");
+                    if (StringUtils.isNoneBlank(headerString)) {
+                        String token = StringUtils.removeFirst(headerString, "Bearer ");
+                        getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                                .edit()
+                                .putString(KEY_LOGIN_USER_USERNAME, response.body().getUsername())
+                                .putString(KEY_TOKEN, token)
+                                .apply();
+                        setResult(
+                                RESULT_OK,
+                                new Intent(LoginActivity.this, MainActivity.class)
+                                        .putExtra(KEY_TOKEN, token)
+                                        .putExtra(KEY_LOGIN_USER, response.body())
+                        );
+                        new Handler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        });
                     }
-                    getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                            .edit()
-                            .putString(KEY_LOGIN_USER, loginUser)
-                            .putString(KEY_TOKEN, token)
-                            .apply();
-                    setResult(
-                            RESULT_OK,
-                            new Intent(LoginActivity.this, MainActivity.class)
-                                    .putExtra(KEY_TOKEN, token)
-                                    .putExtra(KEY_LOGIN_USER, loginUser)
-                    );
-                    new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    });
+                } else if (response.code() == 401) {
+                    Toast.makeText(LoginActivity.this, "登录失败，请检查用户名密码", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "登录失败 [" + t.getMessage() + "]", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e(LoginActivity.class.getName(), t.getMessage());
             }
         });
     }

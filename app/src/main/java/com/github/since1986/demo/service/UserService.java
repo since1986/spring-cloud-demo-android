@@ -1,5 +1,7 @@
 package com.github.since1986.demo.service;
 
+import com.github.since1986.demo.model.User;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -14,5 +16,5 @@ public interface UserService {
 
     @FormUrlEncoded
     @POST("private/login")
-    Call<ResponseBody> login(@Field("username") String username, @Field("password") String password);
+    Call<User> login(@Field("username") String username, @Field("password") String password);
 }
