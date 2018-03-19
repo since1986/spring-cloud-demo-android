@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.github.since1986.demo.model.User;
 import com.github.since1986.demo.service.IndexService;
-import com.github.since1986.demo.service.UserService;
+import com.github.since1986.demo.service.AccountService;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText textInputEditTextUsername;
     private TextInputEditText textInputEditTextPassword;
 
-    private UserService userService;
+    private AccountService accountService;
     private IndexService indexService;
 
     public LoginActivity() {
@@ -87,12 +87,12 @@ public class LoginActivity extends AppCompatActivity {
                 )
 
                 .build();
-        userService = retrofit.create(UserService.class);
+        accountService = retrofit.create(AccountService.class);
         indexService = retrofit.create(IndexService.class);
     }
 
     private void doLogin(final String username, final String password) {
-        Call<User> result = userService.login(username, password);
+        Call<User> result = accountService.login(username, password);
         result.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

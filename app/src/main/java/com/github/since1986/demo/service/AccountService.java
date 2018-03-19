@@ -12,9 +12,13 @@ import retrofit2.http.POST;
  * Created by since1986 on 13/03/2018.
  */
 
-public interface UserService {
+public interface AccountService {
 
     @FormUrlEncoded
     @POST("private/login")
     Call<User> login(@Field("username") String username, @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("private/register")
+    Call<ResponseBody> register(@Field("username") String username, @Field("password") String password, @Field("email") String email, @Field("phone") String phone);
 }
