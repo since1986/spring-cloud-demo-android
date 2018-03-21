@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_LOGIN = 1;
 
-    public static final String API_BASE_URL = "http://10.0.2.2:8002/"; //Android中10.0.2.2代表localhost
+    public static final String API_BASE_URL = "http://10.0.2.2:8081/"; //Android中10.0.2.2代表localhost
     public static final String KEY_SHARED_PREFERENCES = "com.github.since1986.demo";
     public static final String KEY_LOGIN_USER_USERNAME = "LOGIN_USER_USERNAME";
     public static final String KEY_TOKEN = "TOKEN";
