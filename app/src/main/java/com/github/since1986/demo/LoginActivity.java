@@ -95,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
                     Headers responseHeader = response.headers();
-                    String headerString = responseHeader.get("Authorization");
+                    String headerString = responseHeader.get("WWW-Authenticate");
                     if (StringUtils.isNoneBlank(headerString)) {
                         String token = StringUtils.removeFirst(headerString, "Bearer ");
                         getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE)

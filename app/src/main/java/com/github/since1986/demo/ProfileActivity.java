@@ -90,7 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful()) {
-                    Map<String, Object> profile = (Map<String, Object>) response.body().get("profile");
+                    Map<String, Object> profile = response.body();
                     textViewEmail.setText(profile.get("email").toString());
                 } else {
                     try {
